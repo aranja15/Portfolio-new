@@ -228,7 +228,7 @@ export default function PortfolioPage() {
               </a>
             </Button>
           ))}
-          <a href="#projects" className="group inline-flex items-center gap-2 text-neutral-200 hover:text-white">
+          <a href="#experience" className="group inline-flex items-center gap-2 text-neutral-200 hover:text-white">
             See work <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
