@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arjun Ranjan — Software Engineer",
+  title: "Arjun Ranjan",
   description:
     "Software Engineer (MS CS @ ASU). Next.js, TypeScript, GSAP. Building fast, elegant web apps and agentic backends.",
   metadataBase: new URL("https://arjunranjan.com"),
