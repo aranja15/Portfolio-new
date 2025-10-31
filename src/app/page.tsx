@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Public resume link (replace with your Google Drive share URL)
-const RESUME_URL = 'https://drive.google.com/file/d/12UMdadoQZnky9j3iHT4KKwlsVfoA2haf/view?usp=sharing'
+const RESUME_URL = 'https://drive.google.com/drive/folders/1MyDgV55VevOOOUPDc8G2_EJfIqarCOIn?usp=sharing'
 
 // Helper data (pulled from your resume)
 const PROFILE = {
@@ -36,9 +36,8 @@ const EXPERIENCE = [
     role: 'Software Engineering Intern',
     date: 'Sep 2025 – Present',
     bullets: [
-      'Refactored Next.js App Router layouts into shared server components to cut JS bundle size and speed up page loads.',
-      'Raised Lighthouse mobile perf 65 → 90 by restructuring hydration and fixing LCP bottlenecks.',
-      'Introduced Zustand to streamline data fetching and prevent redundant re-renders.',
+      'Refactored Next.js App Router layouts into shared server components, cutting JS bundle size and improving TTI raised Lighthouse Mobile Performance 65 to 90 and reduced LCP by optimizing image hydration and client-islands',
+      'Re-platformed chat to a tool-orchestrated agentic system, improving tool-call success rate from 75% to 95%',
     ],
   },
   {
@@ -228,7 +227,7 @@ export default function PortfolioPage() {
               </a>
             </Button>
           ))}
-          <a href="#projects" className="group inline-flex items-center gap-2 text-neutral-200 hover:text-white">
+          <a href="#experience" className="group inline-flex items-center gap-2 text-neutral-200 hover:text-white">
             See work <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
