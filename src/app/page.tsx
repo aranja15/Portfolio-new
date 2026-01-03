@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Public resume link (replace with your Google Drive share URL)
-const RESUME_URL = 'https://drive.google.com/drive/folders/1MyDgV55VevOOOUPDc8G2_EJfIqarCOIn?usp=sharing'
+const RESUME_URL = 'https://drive.google.com/file/d/1ea3jP3MITu-Lk1s-6HeY-sSpeTnl4de9/view?usp=sharing'
 
 // Helper data (pulled from your resume)
 const PROFILE = {
@@ -32,12 +32,14 @@ const PROFILE = {
 
 const EXPERIENCE = [
   {
-    company: 'Alleo.ai (Techstars ’22)',
+    company: 'Alleo.ai (Techstars ’23)',
     role: 'Software Engineering Intern',
     date: 'Sep 2025 – Present',
     bullets: [
-      'Refactored Next.js App Router layouts into shared server components, cutting JS bundle size and improving TTI raised Lighthouse Mobile Performance 65 to 90 and reduced LCP by optimizing image hydration and client-islands',
       'Re-platformed chat to a tool-orchestrated agentic system, improving tool-call success rate from 75% to 95%',
+      'Replaced RAG with semantic memory retrieval and reflexion to increase retrieval accuracy by 60%',
+      'Built LangGraph agents for complex planning and research',
+      'Refactored Next.js App Router layouts into shared server components, raised Lighthouse Mobile Performance 65 to 90',
     ],
   },
   {
@@ -80,8 +82,17 @@ const PROJECTS = [
     name: 'AI Flashcards',
     stack: 'FastAPI • TypeScript • Ollama',
     points: [
-      'Topic & PDF → structured flashcards via local LLM inference (RAG-ready).',
-      'Interactive React front-end with file upload and dynamic state.',
+      'Developed a full-stack AI-powered flashcard generator using FastAPI and Typescript using local Ollama inference',
+      'Implemented topic and PDF-based flashcard generation with structured prompt engineering and response parsing',
+      'Developed an interactive frontend with React and TypeScript, with dynamic state management and file upload capabilities',
+    ],
+  },
+  {
+    name: 'Agentic Buying Guide',
+    stack: 'Python • LangChain • Streamlit',
+    points: [
+      'Built a multi-stage agentic decision pipeline processing millions+ product records and reviews, transforming free-form queries into structured buying decisions',
+      'Implemented stateful, iterative preference refinement (budget, features, constraints) with deterministic re-ranking, cutting irrelevant recommendations by 70% per iteration and improving response quality across multi-turn sessions',
     ],
   },
 ]
@@ -208,7 +219,7 @@ export default function PortfolioPage() {
       <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-20">
         <div className="absolute -top-24 right-0 w-64 h-64 blur-3xl rounded-full bg-indigo-500/20 blob" />
         <p className="hero-kicker text-sm uppercase tracking-widest text-neutral-200 flex items-center gap-2">
-          <Stars className="h-4 w-4" /> Portfolio
+          <Stars className="h-4 w-4" /> Looking for Summer 2026 Internships/Fall 2026 Full Time
         </p>
         <h1 className="hero-title mt-4 text-4xl md:text-6xl font-semibold tracking-tight">
           {PROFILE.name}
