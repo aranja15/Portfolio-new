@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Public resume link (replace with your Google Drive share URL)
-const RESUME_URL = 'https://drive.google.com/file/d/1ea3jP3MITu-Lk1s-6HeY-sSpeTnl4de9/view?usp=sharing'
+const RESUME_URL = 'https://drive.google.com/drive/folders/1MyDgV55VevOOOUPDc8G2_EJfIqarCOIn?usp=drive_link'
 
 // Helper data (pulled from your resume)
 const PROFILE = {
@@ -32,9 +32,9 @@ const PROFILE = {
 
 const EXPERIENCE = [
   {
-    company: 'Alleo.ai (Techstars ’23)',
+    company: 'Alleo.ai (Techstars 23)',
     role: 'Software Engineering Intern',
-    date: 'Sep 2025 – Present',
+    date: 'Sep 2025 - Present',
     bullets: [
       'Re-platformed chat to a tool-orchestrated agentic system, improving tool-call success rate from 75% to 95%',
       'Replaced RAG with semantic memory retrieval and reflexion to increase retrieval accuracy by 60%',
