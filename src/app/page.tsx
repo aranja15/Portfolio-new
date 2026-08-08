@@ -1,364 +1,455 @@
-// app/page.tsx (single-file drop-in)
-'use client'
-import React, { useLayoutEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Mail, Linkedin, Globe, ArrowRight, Stars, Sparkles, GraduationCap, Briefcase, Code2, FileText } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import type { ElementType } from 'react'
+import {
+  ArrowDown,
+  ArrowUpRight,
+  FileText,
+  Github,
+  Linkedin,
+  Mail,
+  MapPin,
+} from 'lucide-react'
 
-// Register GSAP plugins
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
+import { PortfolioMotion } from '@/components/portfolio/portfolio-motion'
+import {
+  CAPABILITIES,
+  EDUCATION,
+  EXPERIENCE,
+  METRICS,
+  PROFILE,
+  PROJECTS,
+  SKILL_GROUPS,
+  type ProfileLink,
+} from '@/data/portfolio'
+
+const LINK_ICONS: Record<ProfileLink['kind'], ElementType> = {
+  email: Mail,
+  github: Github,
+  linkedin: Linkedin,
+  resume: FileText,
 }
 
-// Public resume link (replace with your Google Drive share URL)
-const RESUME_URL = 'https://drive.google.com/drive/folders/1MyDgV55VevOOOUPDc8G2_EJfIqarCOIn?usp=drive_link'
+const HERO_LINK_ORDER: readonly ProfileLink['kind'][] = [
+  'resume',
+  'github',
+  'linkedin',
+  'email',
+]
 
-// Helper data (pulled from your resume)
-const PROFILE = {
-  name: 'Arjun Ranjan',
-  title: 'Software Engineer • MS CS @ ASU',
-  tagline:
-    'Building fast, elegant web apps and agentic backends. Next.js, TypeScript, FastAPI, Java. Performance-focused and UX-obsessed.',
-  links: [
-    { href: 'mailto:aranja15@asu.edu', label: 'Email', icon: Mail },
-    { href: 'https://linkedin.com/in/arjunranjan', label: 'LinkedIn', icon: Linkedin },
-    { href: 'https://arjunranjan.com', label: 'Website', icon: Globe },
-    { href: RESUME_URL, label: 'Resume', icon: FileText },
-  ],
+const NAV_ITEMS = [
+  { label: 'Profile', href: '#profile' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Systems', href: '#projects' },
+  { label: 'Stack', href: '#skills' },
+] as const
+
+function ActionLink({
+  link,
+  primary = false,
+}: {
+  link: ProfileLink
+  primary?: boolean
+}) {
+  const Icon = LINK_ICONS[link.kind]
+
+  return (
+    <a
+      className={`action-link${primary ? ' action-link--primary' : ''}`}
+      href={link.href}
+      target={link.external ? '_blank' : undefined}
+      rel={link.external ? 'noopener noreferrer' : undefined}
+    >
+      <Icon aria-hidden="true" size={16} strokeWidth={1.8} />
+      <span>{link.label}</span>
+      {link.external ? (
+        <ArrowUpRight
+          aria-hidden="true"
+          className="action-link__arrow"
+          size={15}
+          strokeWidth={1.8}
+        />
+      ) : null}
+    </a>
+  )
 }
 
-
-const EXPERIENCE = [
-  {
-    company: 'Alleo.ai (Techstars 23)',
-    role: 'Software Engineering Intern',
-    date: 'Sep 2025 - Present',
-    bullets: [
-      'Re-platformed chat to a tool-orchestrated agentic system, improving tool-call success rate from 75% to 95%',
-      'Replaced RAG with semantic memory retrieval and reflexion to increase retrieval accuracy by 60%',
-      'Built LangGraph agents for complex planning and research',
-      'Refactored Next.js App Router layouts into shared server components, raised Lighthouse Mobile Performance 65 to 90',
-    ],
-  },
-  {
-    company: 'Ira A. Fulton Schools — SCAI',
-    role: 'Grader (CSE259: Logic in CS)',
-    date: 'Aug 2025 – Present',
-    bullets: [
-      'Graded for 120+ students; designed rubrics with faculty for fair, consistent evaluation.',
-      'Provided targeted feedback and office-hours coaching; cohort performance +15%.',
-    ],
-  },
-  {
-    company: 'Ira A. Fulton Schools — Capstone',
-    role: 'Undergraduate Teaching Assistant',
-    date: 'May 2025 – Aug 2025',
-    bullets: [
-      'Mentored 70+ students on scalable architecture, testing, and agile delivery.',
-    ],
-  },
-  {
-    company: 'tCognition Inc. (Capstone)',
-    role: 'Backend Engineer',
-    date: 'Aug 2024 – May 2025',
-    bullets: [
-      'Designed secure JWT auth in Spring Boot and modeled MongoDB for high-volume ATS data.',
-    ],
-  },
-  {
-    company: 'Headstarter',
-    role: 'Software Engineering Fellow',
-    date: 'Jul 2024 – Sep 2024',
-    bullets: [
-      'Shipped 3 prod-grade full-stack apps (React/Next/Firebase); CI/CD cut deploy time 50%; backend latency –40%.',
-    ],
-  },
-]
-
-const PROJECTS = [
-  {
-    name: 'AI Flashcards',
-    stack: 'FastAPI • TypeScript • Ollama',
-    points: [
-      'Developed a full-stack AI-powered flashcard generator using FastAPI and Typescript using local Ollama inference',
-      'Implemented topic and PDF-based flashcard generation with structured prompt engineering and response parsing',
-      'Developed an interactive frontend with React and TypeScript, with dynamic state management and file upload capabilities',
-    ],
-  },
-  {
-    name: 'Agentic Buying Guide',
-    stack: 'Python • LangChain • Streamlit',
-    points: [
-      'Built a multi-stage agentic decision pipeline processing millions+ product records and reviews, transforming free-form queries into structured buying decisions',
-      'Implemented stateful, iterative preference refinement (budget, features, constraints) with deterministic re-ranking, cutting irrelevant recommendations by 70% per iteration and improving response quality across multi-turn sessions',
-    ],
-  },
-]
-
-const EDUCATION = [
-  {
-    school: 'Arizona State University',
-    degree: 'M.S. in Computer Science',
-    date: 'Dec 2026 (Expected)',
-    extra: 'Relevant: Semantic Web Mining, Applied Cryptography, KRR',
-  },
-  {
-    school: 'Arizona State University',
-    degree: 'B.S. in Computer Science — 3.92 GPA (Dean’s List, all semesters)',
-    date: 'May 2025',
-    extra:
-      'Relevant: DS&A, Compilers, OS, DBMS, ML, Data Mining, iOS, QA, Data Viz',
-  },
-]
-
-const SKILLS = [
-  'Next.js',
-  'React',
-  'TypeScript',
-  'Node.js',
-  'FastAPI',
-  'Python',
-  'Java/Spring Boot',
-  'PostgreSQL/MongoDB',
-  'Docker',
-  'AWS/GCP/Azure',
-  'CI/CD',
-  'UI/UX & Accessibility',
-]
-
-// Styled section wrapper with GSAP hooks
-function Section({ id, kicker, title, icon: Icon, children }: {
-  id: string
-  kicker: string
+function SectionHeading({
+  index,
+  eyebrow,
+  title,
+  description,
+}: {
+  index: string
+  eyebrow: string
   title: string
-  icon: React.ElementType
-  children: React.ReactNode
+  description?: string
 }) {
   return (
-    <section id={id} className="section opacity-0 translate-y-6 max-w-6xl mx-auto px-6 py-20 text-neutral-50">
-      <div className="flex items-center gap-3 mb-6 text-sm uppercase tracking-widest text-neutral-200">
-        <Icon className="h-4 w-4" />
-        <span>{kicker}</span>
+    <div className="section-heading" data-reveal>
+      <div className="section-heading__index">
+        <span>{index}</span>
+        <span>{eyebrow}</span>
       </div>
-      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight mb-10 text-neutral-50">
-        {title}
-      </h2>
-      {children}
-    </section>
+      <div className="section-heading__copy">
+        <h2>{title}</h2>
+        {description ? <p>{description}</p> : null}
+      </div>
+    </div>
   )
 }
 
 export default function PortfolioPage() {
-  const root = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    if (!root.current) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const ctx = gsap.context(() => {
-      if (reduced) return
-
-      // Hero entrance
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8 } })
-      tl.from('.hero-kicker', { y: 20, opacity: 0 })
-        .from('.hero-title', { y: 40, opacity: 0 }, '-=0.4')
-        .from('.hero-sub', { y: 20, opacity: 0 }, '-=0.5')
-        .from('.hero-cta', { y: 10, opacity: 0 }, '-=0.5')
-
-      // Sections on scroll
-      gsap.utils.toArray<HTMLElement>('.section').forEach((el, i) => {
-        gsap.to(el, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 75%'
-          },
-          delay: i * 0.05,
-        })
-      })
-
-      // Parallax blobs
-      gsap.to('.blob', {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: { trigger: '#about', scrub: 0.3 },
-      })
-    }, root)
-
-    return () => ctx.revert()
-  }, [])
+  const heroLinks = HERO_LINK_ORDER.flatMap((kind) => {
+    const link = PROFILE.links.find((item) => item.kind === kind)
+    return link ? [link] : []
+  })
 
   return (
-    <main ref={root} className="relative min-h-screen overflow-x-clip bg-neutral-950 text-neutral-50">
+    <PortfolioMotion>
+      <div className="site-shell">
+        <a className="skip-link" href="#content">
+          Skip to content
+        </a>
 
-      {/* Background aesthetics */}
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(1200px_600px_at_50%_-10%,rgba(99,102,241,0.25),transparent)]" />
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(800px_400px_at_10%_10%,rgba(236,72,153,0.2),transparent)]" />
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(800px_500px_at_90%_20%,rgba(34,197,94,0.15),transparent)]" />
+        <header className="site-header">
+          <div className="header-inner">
+            <a className="index-mark" href="#top" aria-label="Arjun Ranjan, home">
+              <span>AR</span>
+              <span>MODEL / 01</span>
+            </a>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur border-b border-white/10 bg-neutral-950/60">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="font-semibold tracking-tight">AR</div>
-          <nav className="hidden md:flex gap-6 text-sm text-neutral-200">
-            <a href="#about" className="hover:text-white">About</a>
-            <a href="#experience" className="hover:text-white">Experience</a>
-            <a href="#projects" className="hover:text-white">Projects</a>
-            <a href="#skills" className="hover:text-white">Skills</a>
-            <a href="#education" className="hover:text-white">Education</a>
-            <a href="#contact" className="hover:text-white">Contact</a>
-          </nav>
-        </div>
-      </header>
+            <nav className="header-nav" aria-label="Primary navigation">
+              {NAV_ITEMS.map((item, index) => (
+                <a key={item.href} href={item.href}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {item.label}
+                </a>
+              ))}
+            </nav>
 
-      {/* Hero */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-20">
-        <div className="absolute -top-24 right-0 w-64 h-64 blur-3xl rounded-full bg-indigo-500/20 blob" />
-        <p className="hero-kicker text-sm uppercase tracking-widest text-neutral-200 flex items-center gap-2">
-          <Stars className="h-4 w-4" /> Looking for Summer 2026 Internships/Fall 2026 Full Time
-        </p>
-        <h1 className="hero-title mt-4 text-4xl md:text-6xl font-semibold tracking-tight">
-          {PROFILE.name}
-        </h1>
-        <p className="hero-sub mt-3 text-xl text-neutral-200">
-          {PROFILE.title}
-        </p>
-        <p className="hero-sub mt-4 max-w-2xl text-neutral-200">
-          {PROFILE.tagline}
-        </p>
-        <div className="hero-cta mt-8 flex gap-3 flex-wrap">
-          {PROFILE.links.map(({ href, label, icon: Icon }) => (
-            <Button key={label} asChild className="rounded-xl">
-              <a href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2">
-                <Icon className="h-4 w-4" /> {label}
-              </a>
-            </Button>
-          ))}
-          <a href="#experience" className="group inline-flex items-center gap-2 text-neutral-200 hover:text-white">
-            See work <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </a>
-        </div>
-      </section>
+            <a
+              className="header-resume"
+              href={PROFILE.links.find((link) => link.kind === 'resume')?.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume
+              <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.8} />
+            </a>
+          </div>
+        </header>
 
-      {/* About */}
-      <Section id="about" kicker="About" title="Builder of fast, beautiful software" icon={Sparkles}>
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="bg-white/5 border-white/10">
-            <CardContent className="p-6">
-              <p className="text-neutral-200">
-                I blend product taste with systems thinking. Recent work focuses on performance-first Next.js, pragmatic backend services, and agentic workflows.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/5 border-white/10">
-            <CardContent className="p-6">
-              <p className="text-neutral-200">
-                I care about craft: crisp type, accessible motion, and measurable speed. My favorite PRs delete code and make pages feel instant.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="bg-white/5 border-white/10">
-            <CardContent className="p-6">
-              <p className="text-neutral-200">
-                Tooling I reach for: Next.js, TypeScript, GSAP, Framer Motion, FastAPI, Spring Boot, Postgres, MongoDB, Docker, and solid observability.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </Section>
+        <main id="content">
+          <section className="hero-section" id="top">
+            <div className="technical-grid" aria-hidden="true" />
+            <div className="page-frame hero-grid">
+              <div className="hero-main">
+                <div className="status-line" data-hero-status>
+                  <span className="status-dot" aria-hidden="true" />
+                  <span>{PROFILE.status}</span>
+                  <span className="status-line__location">
+                    <MapPin aria-hidden="true" size={13} strokeWidth={1.8} />
+                    {PROFILE.location}
+                  </span>
+                </div>
 
-      {/* Experience */}
-      <Section id="experience" kicker="Experience" title="Where I learned by shipping" icon={Briefcase}>
-        <div className="grid gap-6">
-          {EXPERIENCE.map((e) => (
-            <Card key={e.company + e.role} className="bg-white/5 border-white/10">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <h1 data-hero-title>
+                  <span>{PROFILE.name}</span>
+                  <span className="hero-title__role">{PROFILE.title}</span>
+                </h1>
+
+                <div className="hero-copy" data-hero-copy>
+                  <p className="hero-tagline">{PROFILE.tagline}</p>
+                  <p className="hero-description">{PROFILE.description}</p>
+                </div>
+
+                <div className="hero-actions" data-hero-actions>
+                  {heroLinks.map((link) => (
+                    <ActionLink
+                      key={link.kind}
+                      link={link}
+                      primary={link.kind === 'resume'}
+                    />
+                  ))}
+                  <a className="text-link" href="#projects">
+                    View selected systems
+                    <ArrowDown aria-hidden="true" size={15} strokeWidth={1.8} />
+                  </a>
+                </div>
+              </div>
+
+              <aside className="model-index" data-model-index aria-label="Profile index">
+                <div className="model-index__header">
+                  <span>Model card</span>
+                  <span>AR / 2026</span>
+                </div>
+                <dl>
                   <div>
-                    <h3 className="text-xl font-medium text-neutral-50">{e.role} · <span className="text-neutral-200">{e.company}</span></h3>
+                    <dt>Function</dt>
+                    <dd>AI systems engineering</dd>
                   </div>
-                  <div className="text-neutral-200 text-sm">{e.date}</div>
+                  <div>
+                    <dt>Training</dt>
+                    <dd>MS Computer Science · Dec ’26</dd>
+                  </div>
+                  <div>
+                    <dt>Focus</dt>
+                    <dd>Agents, retrieval, product</dd>
+                  </div>
+                  <div>
+                    <dt>Mode</dt>
+                    <dd>Research → production</dd>
+                  </div>
+                </dl>
+                <div className="model-index__stamp" aria-hidden="true">
+                  <span>BUILD</span>
+                  <strong>USEFUL</strong>
+                  <span>SYSTEMS</span>
                 </div>
-                <ul className="mt-4 list-disc list-inside space-y-2 text-neutral-200">
-                  {e.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </Section>
+              </aside>
+            </div>
 
-      {/* Projects */}
-      <Section id="projects" kicker="Projects" title="Featured work" icon={Code2}>
-        <div className="grid md:grid-cols-2 gap-6">
-          {PROJECTS.map((p) => (
-            <Card key={p.name} className="group bg-white/5 border-white/10 overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-medium text-neutral-50">{p.name}</h3>
-                  <span className="text-xs text-neutral-200 uppercase tracking-widest">{p.stack}</span>
+            <div className="page-frame metric-grid" aria-label="Selected engineering outcomes">
+              {METRICS.map((metric, index) => (
+                <article key={metric.label} className="metric" data-metric>
+                  <span className="metric__index">
+                    EVAL {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <strong>{metric.value}</strong>
+                  <span className="metric__label">{metric.label}</span>
+                  <span className="metric__note">{metric.note}</span>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="dossier-section" id="profile">
+            <div className="page-frame">
+              <SectionHeading
+                index="01"
+                eyebrow="Operating profile"
+                title="Designed for the path from prototype to production."
+                description="I work where model behavior, reliable systems, and the product surface meet."
+              />
+
+              <div className="section-rule" data-rule />
+
+              <div className="capability-list">
+                {CAPABILITIES.map((capability, index) => (
+                  <article className="capability-row" key={capability.title} data-reveal>
+                    <span className="capability-row__index">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h3>{capability.title}</h3>
+                    <p>{capability.description}</p>
+                    <span className="capability-row__evidence">{capability.evidence}</span>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="dossier-section dossier-section--ink" id="experience">
+            <div className="page-frame">
+              <SectionHeading
+                index="02"
+                eyebrow="Experience"
+                title="Shipping history, measured in outcomes."
+                description="Production AI, full-stack systems, and engineering instruction across fast-moving teams."
+              />
+
+              <div className="section-rule" data-rule />
+
+              <div className="experience-ledger">
+                {EXPERIENCE.map((experience, index) => (
+                  <article
+                    className={`experience-record${experience.latest ? ' experience-record--latest' : ''}`}
+                    key={`${experience.company}-${experience.role}`}
+                    data-reveal
+                  >
+                    <span className="experience-record__index">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div className="experience-record__meta">
+                      <span>{experience.date}</span>
+                      {experience.location ? <span>{experience.location}</span> : null}
+                    </div>
+                    <div className="experience-record__body">
+                      <div className="experience-record__heading">
+                        <div>
+                          <h3>{experience.company}</h3>
+                          <p>{experience.role}</p>
+                        </div>
+                        {experience.latest ? <span className="latest-tag">Latest signal</span> : null}
+                      </div>
+                      <ul className="experience-signals">
+                        {experience.points.map((point, pointIndex) => (
+                          <li className="experience-signal" key={point.label}>
+                            <span>
+                              {String(pointIndex + 1).padStart(2, '0')} / {point.label}
+                            </span>
+                            <p>{point.text}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="dossier-section" id="projects">
+            <div className="page-frame">
+              <SectionHeading
+                index="03"
+                eyebrow="Selected systems"
+                title="Two systems. Clear inputs, legible decisions, useful outputs."
+                description="Project work framed as architecture and evidence—not a gallery of screenshots."
+              />
+
+              <div className="section-rule" data-rule />
+
+              <div className="project-grid">
+                {PROJECTS.map((project, projectIndex) => (
+                  <article
+                    className={`project-card${projectIndex % 2 ? ' project-card--inverse' : ''}`}
+                    key={project.name}
+                    data-reveal
+                  >
+                    <div className="project-card__topline">
+                      <span>SYS / {String(projectIndex + 1).padStart(2, '0')}</span>
+                      <span>Case study</span>
+                    </div>
+
+                    <div className="project-card__heading">
+                      <h3>{project.name}</h3>
+                      <a
+                        className="repo-link"
+                        href={project.repoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open ${project.name} repository on GitHub`}
+                      >
+                        <Github aria-hidden="true" size={17} strokeWidth={1.8} />
+                        <span>{project.repoLabel}</span>
+                        <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.8} />
+                      </a>
+                    </div>
+
+                    <div
+                      className="architecture-flow"
+                      role="img"
+                      aria-label={`${project.name} architecture: ${project.architecture.join(' to ')}`}
+                    >
+                      {project.architecture.map((stage, index) => (
+                        <div className="architecture-step" key={stage}>
+                          <span className="architecture-node">{stage}</span>
+                          {index < project.architecture.length - 1 ? (
+                            <span
+                              className="architecture-line"
+                              data-architecture-line
+                              aria-hidden="true"
+                            />
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+
+                    <dl className="case-study-table">
+                      <div>
+                        <dt>Problem</dt>
+                        <dd>{project.problem}</dd>
+                      </div>
+                      <div>
+                        <dt>System</dt>
+                        <dd>{project.system}</dd>
+                      </div>
+                      <div>
+                        <dt>Outcome</dt>
+                        <dd>{project.outcome}</dd>
+                      </div>
+                    </dl>
+
+                    <div className="project-stack">
+                      <span>Stack</span>
+                      <p>{project.stack.join(' / ')}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="dossier-section dossier-section--muted" id="skills">
+            <div className="page-frame">
+              <SectionHeading
+                index="04"
+                eyebrow="Technical range"
+                title="A stack organized around the work."
+                description="Model behavior, application systems, and the infrastructure between them."
+              />
+
+              <div className="section-rule" data-rule />
+
+              <div className="skill-table">
+                {SKILL_GROUPS.map((group, index) => (
+                  <div className="skill-row" key={group.label} data-reveal>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <h3>{group.label}</h3>
+                    <p>{group.items.join(' · ')}</p>
+                  </div>
+                ))}
+              </div>
+
+              <section className="education-block" id="education">
+                <div className="education-block__label" data-reveal>
+                  <span>05</span>
+                  <h2>Education</h2>
                 </div>
-                <ul className="mt-4 space-y-2 text-neutral-200">
-                  {p.points.map((pt, i) => (
-                    <li key={i} className="leading-relaxed">{pt}</li>
+                <div className="education-list">
+                  {EDUCATION.map((item) => (
+                    <article key={item.degree} data-reveal>
+                      <div>
+                        <span>{item.school}</span>
+                        <span>{item.date}</span>
+                      </div>
+                      <h3>{item.degree}</h3>
+                      <p>{item.extra}</p>
+                    </article>
                   ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </Section>
+                </div>
+              </section>
+            </div>
+          </section>
 
-      {/* Skills */}
-      <Section id="skills" kicker="Stack" title="Tools I move fast with" icon={Sparkles}>
-        <div className="flex flex-wrap gap-2">
-          {SKILLS.map((s) => (
-            <span key={s} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-200 text-sm">
-              {s}
-            </span>
-          ))}
-        </div>
-      </Section>
+          <section className="contact-section" id="contact">
+            <div className="page-frame contact-grid">
+              <div className="contact-index" data-reveal>
+                <span>06</span>
+                <span>Contact / next run</span>
+              </div>
+              <div className="contact-main" data-reveal>
+                <p>Have a difficult system to make useful?</p>
+                <h2>Let&apos;s build the next one.</h2>
+                <div className="contact-actions">
+                  {PROFILE.links.map((link) => (
+                    <ActionLink key={link.kind} link={link} primary={link.kind === 'email'} />
+                  ))}
+                </div>
+              </div>
+            </div>
 
-      {/* Education */}
-      <Section id="education" kicker="Education" title="Foundations" icon={GraduationCap}>
-        <div className="grid md:grid-cols-2 gap-6">
-          {EDUCATION.map((ed) => (
-            <Card key={ed.degree} className="bg-white/5 border-white/10">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-medium text-neutral-50">{ed.degree}</h3>
-                <div className="text-neutral-200 mt-1">{ed.school} • {ed.date}</div>
-                <p className="text-neutral-200 mt-3">{ed.extra}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      {/* Contact */}
-      <Section id="contact" kicker="Contact" title="Let’s build something excellent" icon={Mail}>
-        <div className="flex flex-wrap items-center gap-3">
-          {PROFILE.links.map(({ href, label, icon: Icon }) => (
-            <Button key={label} asChild variant="secondary" className="rounded-xl">
-              <a href={href} target="_blank" rel="noreferrer" className="flex items-center gap-2">
-                <Icon className="h-4 w-4" /> {label}
+            <footer className="page-frame site-footer">
+              <span>© {new Date().getFullYear()} {PROFILE.name}</span>
+              <span>Next.js / TypeScript / GSAP</span>
+              <a href="#top">
+                Back to index
+                <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.8} />
               </a>
-            </Button>
-          ))}
-        </div>
-      </Section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-10 text-center text-neutral-200 text-sm">
-        © {new Date().getFullYear()} {PROFILE.name}. Crafted with Next.js, TypeScript & GSAP.
-      </footer>
-    </main>
+            </footer>
+          </section>
+        </main>
+      </div>
+    </PortfolioMotion>
   )
 }
-
