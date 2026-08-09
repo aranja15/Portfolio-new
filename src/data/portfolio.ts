@@ -114,6 +114,10 @@ export const EXPERIENCE: readonly ExperienceItem[] = [
     latest: true,
     points: [
       {
+        label: 'Build vs. buy / $6K saved',
+        text: 'Replaced paid e-signature tooling with an in-house DocuSign-style flow for sequential signing, secure links, and audit trails—saving $6K annually.',
+      },
+      {
         label: 'Catalog ops / 04 brands',
         text: 'Turned Amazon and Shopify catalog onboarding into a repeatable AI-assisted mapping flow for four brands.',
       },
