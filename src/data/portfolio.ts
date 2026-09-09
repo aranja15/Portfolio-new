@@ -138,7 +138,7 @@ export const EXPERIENCE: readonly ExperienceItem[] = [
   {
     company: 'Alleo.ai (Techstars ’23)',
     role: 'AI Engineer Intern',
-    date: 'Aug 2025 – May 2026',
+    date: 'Sep 2025 – May 2026',
     points: [
       {
         label: 'Agent runtime / 75 → 95%',
